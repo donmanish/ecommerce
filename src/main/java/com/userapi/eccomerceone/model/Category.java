@@ -19,14 +19,6 @@ import java.util.List;
 @Table(name = "categories")
 public class Category extends BaseModel{
     private String title;
-    //make lazy or eager when it not working lazy and eager
-
-    //when make lazy but by default eager
-    //@OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
-
-    //make the eager Which give in one time sql code with JOIN
-    //@OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
-
 
     @OneToMany(mappedBy = "category")
     @JsonIgnore

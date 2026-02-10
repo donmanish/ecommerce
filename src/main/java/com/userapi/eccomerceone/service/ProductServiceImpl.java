@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-@Service("dbStoreProductService")
+@Service("ProductServiceImpl")
 public class ProductServiceImpl implements ProductService{
 
     private ProductRepository productRepository;
@@ -24,13 +24,14 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public Product getSingleProduct(Long ProductId) throws ProductNotFoundException {
-        //a container object which may or may not contain a non-null value
-        Optional<Product> p = productRepository.findById(ProductId);
-        if(p.isPresent())
+        Optional<Product> product = productRepository.findById(ProductId);
+
+        if(!product.isPresent())
         {
-            return p.get();
+            throw new ProductNotFoundException("product not found");
         }
-        throw new ProductNotFoundException("product not found");
+        return product.get();
+
     }
 
     @Override
@@ -40,50 +41,54 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public Product createProduct(Product product) {
-        Category cat = categoryRepository.findByTitle(product.getCategory().getTitle());
-        if(cat == null)
-        {
-            Category newcat = new Category();
-            newcat.setTitle(product.getCategory().getTitle());
-            Category newRow = categoryRepository.save(newcat);
-            product.setCategory(newRow);
-        } else {
-            product.setCategory(cat);
+        String categoryTitle = product.getCategory().getTitle();
+
+        if (categoryTitle == null || categoryTitle.isEmpty()) {
+            throw new RuntimeException("Product category title is required");
         }
 
-        Product savedProduct = productRepository.save(product);
-        return savedProduct;
+        Category category = categoryRepository.findByTitle(categoryTitle)
+                .orElseGet(() -> {
+                    // If not found, create new
+                    Category newCat = new Category();
+                    newCat.setTitle(categoryTitle);
+                    newCat.setDelete(false);
+                    Category savedCat = categoryRepository.save(newCat);
+                    return savedCat;
+                });
+
+        product.setDelete(false);
+        product.setCategory(category);
+        return productRepository.save(product);
     }
 
     @Override
-    public Product updateProduct(Long ProductId, Product updateDetails) {
+    public Product updateProduct(Long ProductId, Product updateDetails) throws  ProductNotFoundException{
         Optional<Product> updateProduct = productRepository.findById(ProductId);
         //product present or not----------------------
-        if (updateProduct.isPresent()) {
-            Product existingProduct = updateProduct.get();
-            existingProduct.setTitle(updateDetails.getTitle());
-            existingProduct.setDescription(updateDetails.getDescription());
-            // Update other fields as needed
+        if (!updateProduct.isPresent()) {
 
-            return productRepository.save(existingProduct);
-        } else {
-            // Handle case where product with given ID is not found
-            return null;
+            // Update other fields as needed
+            throw new ProductNotFoundException("product not found");
+
         }
+        Product existingProduct = updateProduct.get();
+        existingProduct.setTitle(updateDetails.getTitle());
+        existingProduct.setDescription(updateDetails.getDescription());
+        return productRepository.save(existingProduct);
     }
 
     @Override
-    public Product deleteProduct(Long ProductId) {
+    public Product deleteProduct(Long ProductId)  throws ProductNotFoundException{
         Optional<Product> deleteProduct = productRepository.findById(ProductId);
 
-        if (deleteProduct.isPresent()) {
-            Product productToDelete = deleteProduct.get();
-            productRepository.delete(productToDelete);
-            return productToDelete;
-        } else {
-            // Handle case where product with given ID is not found
-            return null;
+        if (!deleteProduct.isPresent()) {
+            throw new ProductNotFoundException("product not found");
         }
+
+        Product productToDelete = deleteProduct.get();
+        productRepository.delete(productToDelete);
+        return productToDelete;
     }
 
     @Override
@@ -93,9 +98,9 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public Category getCategoryByTitle(String title) {
-        Optional<Category> c = Optional.ofNullable(categoryRepository.findByTitle(title));
-        return c.get();
-
+        return categoryRepository.findByTitle(title)
+                .orElseThrow(() -> new RuntimeException("Category not found with title: " + title));
     }
+
 }
 

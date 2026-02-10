@@ -10,11 +10,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    Product save(Product product); // for create
-    //insert into product value ();
-    Product findByTitle(String title);
-    //select * from product Where title = {};
-    Product findByDescription(String description);
 
     //How to implement HQL
     @Query("select p from Product p  where p.category.id = :categoryId")

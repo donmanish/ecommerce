@@ -13,8 +13,8 @@ public interface ProductService {
     Product  getSingleProduct(Long ProductId) throws ProductNotFoundException;
     List<Product> getAllProducts();
     Product createProduct(Product product);
-    Product  updateProduct(Long ProductId, Product updateDetails);
-    Product  deleteProduct(Long ProductId);
+    Product  updateProduct(Long ProductId, Product updateDetails) throws ProductNotFoundException;
+    Product  deleteProduct(Long ProductId) throws ProductNotFoundException;
 
     //category related method
     List<Category> getAllCategory();

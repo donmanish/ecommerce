@@ -46,7 +46,6 @@ public class AuthController {
 
         String token = jwtUtil.generateToken(request.getEmail());
 
-        System.out.printf("Token: %s%n", token);
 
         return ResponseEntity.ok(
                 new LoginResponse("Login successful", token)
