@@ -3,6 +3,7 @@ package com.userapi.eccomerceone.controller;
 import com.userapi.eccomerceone.dto.ErrorDto;
 import com.userapi.eccomerceone.dto.ProductDTO;
 import com.userapi.eccomerceone.exceptions.ProductNotFoundException;
+import com.userapi.eccomerceone.exceptions.UnauthorizedException;
 import com.userapi.eccomerceone.model.Category;
 import com.userapi.eccomerceone.model.Product;
 import com.userapi.eccomerceone.service.ProductService;
@@ -13,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -26,7 +29,7 @@ public class ProductController {
    private  ProductService productService;
 
     //for for connection to database
-    public ProductController(@Qualifier("ProductServiceImpl") ProductService productService) {
+    public ProductController(@Qualifier("ProductServiceImpl") ProductService productService) throws UnauthorizedException {
         this.productService = productService;
     }
 
@@ -34,7 +37,13 @@ public class ProductController {
     //get all products----------------------------------------------
     @GetMapping("/products")
     @Operation(summary = "List all products")
-    public ResponseEntity<?> getAllProducts() {
+    public ResponseEntity<?> getAllProducts() throws UnauthorizedException{
+
+        if (!isAuthenticated()) {
+            throw new UnauthorizedException("User is not authenticated. Please login first.");
+        }
+
+
         try {
             List<Product> products = productService.getAllProducts();
             List<ProductDTO> dtoList = products.stream()
@@ -61,7 +70,11 @@ public class ProductController {
     //create a products
     @PostMapping("/products")
     @Operation(summary = "Create a new product")
-    public ResponseEntity<Object> createProduct(@RequestBody Product product) {
+    public ResponseEntity<Object> createProduct(@RequestBody Product product) throws UnauthorizedException{
+        if (!isAuthenticated()) {
+            throw new UnauthorizedException("User is not authenticated. Please login first.");
+        }
+
         try {
             Product savedProduct = productService.createProduct(product);
 
@@ -84,7 +97,11 @@ public class ProductController {
     }
     @GetMapping("/products/{id}")
 
-    public ResponseEntity<Object> getProduct(@PathVariable("id") Long productId) {
+    public ResponseEntity<Object> getProduct(@PathVariable("id") Long productId) throws UnauthorizedException{
+        if (!isAuthenticated()) {
+            throw new UnauthorizedException("User is not authenticated. Please login first.");
+        }
+
         try {
             Product product = productService.getSingleProduct(productId);
 
@@ -126,7 +143,12 @@ public class ProductController {
     //update product--------------------------------------------
     @PutMapping("/products/{id}")
     public ResponseEntity<Object> updateProduct(@PathVariable("id") Long productId,
-                                                @RequestBody Product updateDetails) {
+                                                @RequestBody Product updateDetails) throws UnauthorizedException{
+
+        if (!isAuthenticated()) {
+            throw new UnauthorizedException("User is not authenticated. Please login first.");
+        }
+
         try {
             Product updatedProduct = productService.updateProduct(productId, updateDetails);
             ProductDTO dto = new ProductDTO();
@@ -162,7 +184,12 @@ public class ProductController {
 
     //delete product--------------------------------------------------
     @DeleteMapping("/products/{id}")
-    public ResponseEntity<Object> deleteProduct(@PathVariable("id") Long productId) {
+    public ResponseEntity<Object> deleteProduct(@PathVariable("id") Long productId) throws UnauthorizedException{
+
+        if (!isAuthenticated()) {
+            throw new UnauthorizedException("User is not authenticated. Please login first.");
+        }
+
         try {
             Product deletedProduct = productService.deleteProduct(productId);
 
@@ -198,13 +225,20 @@ public class ProductController {
     }
     //all category--------------------------------------------------
     @GetMapping("/categories")
-    public List<Category> getAllCategories() {
+    public List<Category> getAllCategories() throws UnauthorizedException{
+        if (!isAuthenticated()) {
+            throw new UnauthorizedException("User is not authenticated. Please login first.");
+        }
+
         return productService.getAllCategory();
     }
 
     //get specify category title--------------------------------------
     @GetMapping("/categories/{title}")
-    public Category getCategory(@PathVariable("title") String title) {
+    public Category getCategory(@PathVariable("title") String title) throws UnauthorizedException{
+        if (!isAuthenticated()) {
+            throw new UnauthorizedException("User is not authenticated. Please login first.");
+        }
         return productService.getCategoryByTitle(title);
     }
 
@@ -219,8 +253,13 @@ public class ProductController {
 
     //backend aws connect work
     @GetMapping("/health")
-    public ResponseEntity<String> checkHealthOfService()  {
+    public ResponseEntity<String> checkHealthOfService()  throws UnauthorizedException{
         return new ResponseEntity<>("Backend service application work perfectly file", HttpStatus.OK);
+    }
+
+    private boolean isAuthenticated() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null && authentication.isAuthenticated();
     }
 
 }

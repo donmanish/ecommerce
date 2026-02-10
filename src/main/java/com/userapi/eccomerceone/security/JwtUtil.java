@@ -11,13 +11,14 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    @Value("${jwt.secret}")
+    @Value("${jwt.secret}") // make sure this is at least 32 chars
     private String secret;
 
-    @Value("${jwt.expiration}")
+    @Value("${jwt.expiration}") // in milliseconds
     private long expiration;
 
     private SecretKey getSigningKey() {
+        // HS256 requires key >= 256 bits (32 bytes)
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
@@ -31,10 +32,26 @@ public class JwtUtil {
     }
 
     public String extractUsername(String token) {
-        return Jwts.parser()
+        return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
+                .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+
+    public boolean validateToken(String token, String email) {
+        String username = extractUsername(token);
+        return username.equals(email) && !isTokenExpired(token);
+    }
+
+    private boolean isTokenExpired(String token) {
+        Date expirationDate = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+        return expirationDate.before(new Date());
     }
 }
