@@ -3,12 +3,14 @@ package com.userapi.eccomerceone.controller;
 import com.userapi.eccomerceone.dto.PaymentRequestDTO;
 import com.userapi.eccomerceone.dto.PaymentResponseDTO;
 import com.userapi.eccomerceone.service.PaymentService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/payments")
+@Tag(name = "Payment for order")
 public class PaymentController {
 
     private final PaymentService paymentService;
