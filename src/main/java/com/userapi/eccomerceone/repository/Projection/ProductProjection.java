@@ -1,4 +1,4 @@
-package com.userapi.eccomerceone.repositories.Projection;
+package com.userapi.eccomerceone.repository.Projection;
 
 //Projection work when define interface
 public interface ProductProjection {

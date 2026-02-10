@@ -1,4 +1,4 @@
-package com.userapi.eccomerceone.repositories;
+package com.userapi.eccomerceone.repository;
 
 import com.userapi.eccomerceone.model.Category;
 import org.springframework.data.jpa.repository.JpaRepository;

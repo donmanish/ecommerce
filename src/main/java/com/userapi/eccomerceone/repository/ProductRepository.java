@@ -1,7 +1,7 @@
-package com.userapi.eccomerceone.repositories;
+package com.userapi.eccomerceone.repository;
 
 import com.userapi.eccomerceone.model.Product;
-import com.userapi.eccomerceone.repositories.Projection.ProductProjection;
+import com.userapi.eccomerceone.repository.Projection.ProductProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

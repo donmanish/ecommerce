@@ -3,20 +3,20 @@ package com.userapi.eccomerceone.service;
 import com.userapi.eccomerceone.exceptions.ProductNotFoundException;
 import com.userapi.eccomerceone.model.Category;
 import com.userapi.eccomerceone.model.Product;
-import com.userapi.eccomerceone.repositories.CategoryRepository;
-import com.userapi.eccomerceone.repositories.ProductRepository;
+import com.userapi.eccomerceone.repository.CategoryRepository;
+import com.userapi.eccomerceone.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service("dbStoreProductService")
-public class DbStoreProductService implements ProductService{
+public class ProductServiceImpl implements ProductService{
 
     private ProductRepository productRepository;
     private CategoryRepository categoryRepository;
 
-    public DbStoreProductService(ProductRepository productRepository, CategoryRepository categoryRepository)
+    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository)
     {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;

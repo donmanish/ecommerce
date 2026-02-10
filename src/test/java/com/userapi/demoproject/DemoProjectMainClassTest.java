@@ -3,16 +3,15 @@ package com.userapi.demoproject;
 import com.userapi.eccomerceone.ProjectMainClass;
 import com.userapi.eccomerceone.model.Category;
 import com.userapi.eccomerceone.model.Product;
-import com.userapi.eccomerceone.repositories.CategoryRepository;
-import com.userapi.eccomerceone.repositories.ProductRepository;
+import com.userapi.eccomerceone.repository.CategoryRepository;
+import com.userapi.eccomerceone.repository.ProductRepository;
 
-import com.userapi.eccomerceone.repositories.Projection.ProductProjection;
+import com.userapi.eccomerceone.repository.Projection.ProductProjection;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
-import java.util.Optional;
 
 @SpringBootTest(classes = ProjectMainClass.class)
 

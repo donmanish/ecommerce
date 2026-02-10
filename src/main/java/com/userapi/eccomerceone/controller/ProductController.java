@@ -28,15 +28,6 @@ public class ProductController {
     }
 
 
-    // route for index
-    @GetMapping("/")
-    public ResponseEntity<Void> index() {
-        return ResponseEntity
-                .status(HttpStatus.FOUND)
-                .header(HttpHeaders.LOCATION, "/swagger-ui/index.html")
-                .build();
-    }
-
     //get all products----------------------------------------------
     @GetMapping("/products")
     @Operation(summary = "List all products")
