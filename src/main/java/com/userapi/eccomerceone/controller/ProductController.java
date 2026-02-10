@@ -36,32 +36,39 @@ public class ProductController {
 
     //get all products----------------------------------------------
     @GetMapping("/products")
-    @Operation(summary = "List all products")
-    public ResponseEntity<?> getAllProducts() throws UnauthorizedException{
+    @Operation(summary = "List products with pagination, sorting(asc, desc), and search (when do serch remove page, size")
+    public ResponseEntity<?> getProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) String search
+    ) throws UnauthorizedException {
 
         if (!isAuthenticated()) {
             throw new UnauthorizedException("User is not authenticated. Please login first.");
         }
 
-
         try {
-            List<Product> products = productService.getAllProducts();
-            List<ProductDTO> dtoList = products.stream()
+            var productsPage = productService.getAllProducts(page, size, sortBy, sortDir, search);
+
+            List<ProductDTO> dtoList = productsPage.getContent().stream()
                     .map(ProductDTO::new)
                     .toList();
 
-            return ResponseEntity.ok().body(Map.of(
-                    "message", "Products fetched successfully",
-                    "data", dtoList
-            ));
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Products fetched successfully");
+            response.put("data", dtoList);
+            response.put("currentPage", productsPage.getNumber());
+            response.put("totalItems", productsPage.getTotalElements());
+            response.put("totalPages", productsPage.getTotalPages());
+
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            e.printStackTrace(); // so you see what went wrong
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of(
-                            "message", "Failed to fetch products",
-                            "error", e.getMessage()
-                    ));
+                    .body(Map.of("message", "Failed to fetch products", "error", e.getMessage()));
         }
     }
 

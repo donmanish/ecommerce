@@ -2,6 +2,8 @@ package com.userapi.eccomerceone.repository;
 
 import com.userapi.eccomerceone.model.Product;
 import com.userapi.eccomerceone.repository.Projection.ProductProjection;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,4 +28,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("select p.title as title, p.id as id from Product p  where p.category.id = :categoryId")
     List<ProductProjection> getProductByCategoryIdProjection(@Param("categoryId") Long categoryId);
 
+
+    // Search by title (case-insensitive) with pagination
+    @Query("SELECT p FROM Product p " +
+            "WHERE LOWER(p.title) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
+            "OR LOWER(p.category.title) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
+    Page<Product> searchByTitleOrCategory(@Param("searchTerm") String searchTerm, Pageable pageable);
 }

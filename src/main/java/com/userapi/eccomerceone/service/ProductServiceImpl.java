@@ -5,6 +5,10 @@ import com.userapi.eccomerceone.model.Category;
 import com.userapi.eccomerceone.model.Product;
 import com.userapi.eccomerceone.repository.CategoryRepository;
 import com.userapi.eccomerceone.repository.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,8 +39,14 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public List<Product> getAllProducts() {
-        return  productRepository.findAll();
+    public Page<Product> getAllProducts(int page, int size, String sortBy, String sortDir, String searchTerm) {
+        Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        if (searchTerm != null && !searchTerm.isEmpty()) {
+            return productRepository.searchByTitleOrCategory(searchTerm, pageable);
+        } else {
+            return productRepository.findAll(pageable);
+        }
     }
 
     @Override
@@ -93,6 +103,7 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public List<Category> getAllCategory() {
+
         return  categoryRepository.findAll();
     }
 

@@ -2,6 +2,8 @@ package com.userapi.eccomerceone.service;
 import com.userapi.eccomerceone.exceptions.ProductNotFoundException;
 import com.userapi.eccomerceone.model.Category;
 import com.userapi.eccomerceone.model.Product;
+import org.springframework.data.domain.Page;
+
 import java.util.List;
 
 
@@ -11,7 +13,7 @@ public interface ProductService {
 
     //product related method
     Product  getSingleProduct(Long ProductId) throws ProductNotFoundException;
-    List<Product> getAllProducts();
+    Page<Product> getAllProducts(int page, int size, String sortBy, String sortDir, String searchTerm);
     Product createProduct(Product product);
     Product  updateProduct(Long ProductId, Product updateDetails) throws ProductNotFoundException;
     Product  deleteProduct(Long ProductId) throws ProductNotFoundException;
