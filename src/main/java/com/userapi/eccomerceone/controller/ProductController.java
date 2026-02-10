@@ -4,7 +4,6 @@ import com.userapi.eccomerceone.dto.ErrorDto;
 import com.userapi.eccomerceone.exceptions.ProductNotFoundException;
 import com.userapi.eccomerceone.model.Category;
 import com.userapi.eccomerceone.model.Product;
-import com.userapi.eccomerceone.service.FakeStoreProductService;
 import com.userapi.eccomerceone.service.ProductService;
 //import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,21 +19,7 @@ import java.util.List;
 @RestController
 @Tag(name = "Product APIs", description = "Operations for managing products")
 public class ProductController {
-    //POST(method) //Product(end point)
-//    Request Body
-//    {
-//        "title": "test product",
-//        "price": 13.8,
-//        "description": "lorem ipsum set",
-//        "image": "https: //i.pravatar.cc",
-//        "category": "electronic"
-//    }
 
-    //  interact with service also known as Dependency injection
-    //  ProductService productService = new FakeStoreProductService();
-    //  spring to create depedency injection
-
-//    @Autowired
    private  ProductService productService;
 
     //for for connection to database
@@ -42,10 +27,6 @@ public class ProductController {
         this.productService = productService;
     }
 
-   //for fakeproduct seerce 3rd party integration
-//    public ProductController(@Qualifier("fakeProductService") ProductService productService) {
-//        this.productService = productService;
-//    }
 
     // route for index
     @GetMapping("/")
